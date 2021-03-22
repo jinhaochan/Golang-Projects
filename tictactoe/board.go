@@ -18,38 +18,31 @@ func newBoard() board {
 }
 
 // adds a move to the board
-// returns 1 if the move is valid
-// returns -1 if the move is invalid
-func (b board) addMove(p string, m move) int {
-	// board placement already taken
-	if b[m.x][m.y] == "_" {
-		fmt.Println("Position already taken")
-		return -1
-	} else {
-		b[m.x][m.y] = p
-		return 0
-	}
+func (b board) addMove(p string, m move) {
+	b[m.x][m.y] = p
 }
 
-// function to check if the slice contains 3 of the same elements
+// function to check if the slice contains 3 of the same elements other than '_'
 // returns 1 if its does
 // returns 0 if its does not
-func checkThrees(moves []string) int {
+func checkThrees(collection []string) int {
 	isThrees := 0
 
-	// creating a map to store the moves
+	// creating a map to store the moves in the collection
 	elements := make(map[string]int)
 
-	for _, move := range moves {
-		// checking if the element exists
-		_, ok := elements[move]
-		if ok != true {
-			elements[move] = 1
-		} else {
-			elements[move] += 1
-			// if the total element count adds up to 3, set the flag = 1
-			if elements[move] == 3 {
-				isThrees = 1
+	for _, pat := range collection {
+		if pat != "_" {
+			// checking if the element exists
+			_, ok := elements[pat]
+			if !ok {
+				elements[pat] = 1
+			} else {
+				elements[pat] += 1
+				// if the total element count adds up to 3, set the flag = 1
+				if elements[pat] == 3 {
+					isThrees = 1
+				}
 			}
 		}
 	}
@@ -60,22 +53,82 @@ func checkThrees(moves []string) int {
 // happens after making a move
 // checks the rows, columns and diagonals
 // retuns 1 if there is a winner
-// else returns -1 if there is none
+// else returns 0 if there is none
 func (b board) checkWin() int {
-	winCondition := 0
+	winConditions := []int{}
 
 	// checking rows
 	for _, val := range b {
-		winCondition = checkThrees(val)
-		if winCondition == 1 {
-			break
-		}
+		winConditions = append(winConditions, checkThrees(val))
 	}
 
 	// Transpose to get columns
+	tb := transpose(b)
+
+	for _, val := range tb {
+		winConditions = append(winConditions, checkThrees(val))
+	}
 
 	// Checking diagonals
+	d1 := []string{b[0][0], b[1][1], b[2][2]}
+	d2 := []string{b[0][2], b[1][1], b[2][0]}
+	winConditions = append(winConditions, checkThrees(d1))
+	winConditions = append(winConditions, checkThrees(d2))
 
-	return winCondition
+	maxVal := 0
 
+	// if there is a winner, the value would 1, which is larger maxVal = 0
+	// we return that value to indicate if there is a winner or not
+	for _, val := range winConditions {
+		if val > maxVal {
+			maxVal = val
+		}
+	}
+
+	return maxVal
+}
+
+func transpose(s board) board {
+	t := newBoard()
+
+	for i := 0; i < 3; i++ {
+		for j := 0; j < 3; j++ {
+			t[i][j] = s[j][i]
+		}
+	}
+
+	return t
+}
+
+// checks if the move is valid
+// checks if the coordinates given are within range 0 to 2
+// checks if the position is empty
+func (b board) validCheck(m move) int {
+	isValid := 1
+
+	if m.x > 2 || m.y > 2 {
+		fmt.Println("Invalid coordinates!")
+		isValid = 0
+	} else if b[m.x][m.y] != "_" {
+		fmt.Println("Position already taken")
+		isValid = 0
+	}
+
+	return isValid
+}
+
+func inputCheck(s []string) int {
+	isValid := 1
+
+	if len(s) != 2 {
+		fmt.Println("Wrong number of coordinates given. Expected 2")
+		isValid = 0
+	}
+	return isValid
+}
+
+func (b board) printBoard() {
+	for i := range b {
+		fmt.Println(b[i])
+	}
 }

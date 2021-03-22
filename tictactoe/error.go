@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"	"os"
+	"fmt"
+	"os"
 )
-
 
 func errorCheck(e error) {
 	if e != nil {
