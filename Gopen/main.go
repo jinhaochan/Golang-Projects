@@ -12,7 +12,7 @@ func main() {
 
 	login(mainSite, "login.php", client)
 
-	wg.Add(6)
+	wg.Add(7)
 
 	go cmdInject(mainSite, "vulnerabilities/exec/", client)
 
@@ -25,6 +25,8 @@ func main() {
 	go csrf(mainSite, "vulnerabilities/csrf/", client)
 
 	go rfi(mainSite, "vulnerabilities/fi/", client)
+
+	go xss_dom(mainSite, "vulnerabilities/xss_d/", client)
 
 	wg.Wait()
 

