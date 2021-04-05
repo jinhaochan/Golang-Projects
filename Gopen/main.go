@@ -24,7 +24,7 @@ func main() {
 
 	go csrf(mainSite, "vulnerabilities/csrf/", client)
 
-	go rfi(mainSite, "vulnerabilities/fi/", client)
+	go lfi(mainSite, "vulnerabilities/fi/", client)
 
 	go xss_dom(mainSite, "vulnerabilities/xss_d/", client)
 
