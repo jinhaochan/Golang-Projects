@@ -165,7 +165,7 @@ func csrf(site string, path string, client *http.Client) {
 
 }
 
-func rfi(site string, path string, client *http.Client) {
+func lfi(site string, path string, client *http.Client) {
 	defer wg.Done()
 
 	final := site + path + "?page=file4.php"
