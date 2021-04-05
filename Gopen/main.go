@@ -1,5 +1,9 @@
 package main
 
+import "sync"
+
+var wg sync.WaitGroup
+
 func main() {
 
 	mainSite := "http://192.168.71.129/"
@@ -8,5 +12,20 @@ func main() {
 
 	login(mainSite, "login.php", client)
 
-	cmdInject(mainSite, "vulnerabilities/exec/", client)
+	wg.Add(6)
+
+	go cmdInject(mainSite, "vulnerabilities/exec/", client)
+
+	go SQLInject(mainSite, "vulnerabilities/sqli/", client)
+
+	go blindSQLInject(mainSite, "vulnerabilities/sqli_blind/", client)
+
+	go javascript(mainSite, "vulnerabilities/javascript/", client)
+
+	go csrf(mainSite, "vulnerabilities/csrf/", client)
+
+	go rfi(mainSite, "vulnerabilities/fi/", client)
+
+	wg.Wait()
+
 }
